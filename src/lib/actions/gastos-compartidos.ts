@@ -194,6 +194,79 @@ export async function getAportePorCategoria(mesId: string): Promise<Record<strin
   return result
 }
 
+export async function copiarGastosCompartidosDelMesPrevio(
+  mesId: string,
+  userId: string
+): Promise<number> {
+  const supabase = await getSupabaseServerClient()
+
+  // Get current month info
+  const { data: mesActual } = await supabase
+    .from('meses')
+    .select('anio, mes')
+    .eq('id', mesId)
+    .single()
+
+  if (!mesActual) throw new Error('Mes no encontrado')
+
+  // Find previous month
+  let prevAnio = mesActual.anio
+  let prevMes = mesActual.mes - 1
+  if (prevMes === 0) { prevMes = 12; prevAnio-- }
+
+  const { data: mesPrevio } = await supabase
+    .from('meses')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('anio', prevAnio)
+    .eq('mes', prevMes)
+    .single()
+
+  if (!mesPrevio) throw new Error('No hay mes previo')
+
+  // Get all shared expenses from previous month with participants
+  const { data: gastosPrevios } = await supabase
+    .from('gastos_compartidos')
+    .select('*, participantes:participantes_gasto(*)')
+    .eq('mes_id', mesPrevio.id)
+
+  if (!gastosPrevios || gastosPrevios.length === 0) return 0
+
+  // Copy each gasto with its participants
+  for (const g of gastosPrevios) {
+    const { data: nuevoGasto, error } = await supabase
+      .from('gastos_compartidos')
+      .insert({
+        mes_id: mesId,
+        categoria: g.categoria,
+        descripcion: g.descripcion,
+        monto_total: g.monto_total,
+        fecha: new Date().toISOString().split('T')[0],
+      })
+      .select()
+      .single()
+
+    if (error) throw new Error(error.message)
+
+    const participantes = (g.participantes ?? []) as Participante[]
+    if (participantes.length > 0) {
+      const { error: partError } = await supabase
+        .from('participantes_gasto')
+        .insert(participantes.map((p) => ({
+          gasto_compartido_id: nuevoGasto.id,
+          nombre: p.nombre,
+          sueldo: p.sueldo,
+          es_usuario_actual: p.es_usuario_actual,
+        })))
+      if (partError) throw new Error(partError.message)
+    }
+  }
+
+  revalidatePath('/dashboard')
+  revalidatePath('/gastos-compartidos')
+  return gastosPrevios.length
+}
+
 export async function getAporteUsuario(mesId: string): Promise<number> {
   const supabase = await getSupabaseServerClient()
 

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(PGPASSWORD='Tyronycoco$01' psql \"postgresql://postgres.hirmiykzjbsifwzbnlsg:Tyronycoco\\\\$01@aws-0-us-east-1.pooler.supabase.com:6543/postgres\" -c \"SELECT 1\" 2>&1)",
+      "Bash(npm run:*)"
+    ]
+  }
+}

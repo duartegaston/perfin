@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, Pencil, Trash2, Lock, UserPlus } from 'lucide-react'
+import { Plus, Pencil, Trash2, Lock, UserPlus, Copy } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,7 +11,7 @@ import GastoCompartidoForm from './GastoCompartidoForm'
 import ParticipanteForm from './ParticipanteForm'
 import ParticipantesPredefinidosManager from './ParticipantesPredefinidosManager'
 import CategoriasManager from '@/components/categorias/CategoriasManager'
-import { deleteGastoCompartido, deleteParticipante } from '@/lib/actions/gastos-compartidos'
+import { deleteGastoCompartido, deleteParticipante, copiarGastosCompartidosDelMesPrevio } from '@/lib/actions/gastos-compartidos'
 import { formatARS } from '@/lib/utils'
 import type { GastoCompartido, Participante, CategoriaUsuario, ParticipantePredefinido } from '@/types'
 
@@ -42,6 +42,28 @@ export default function GastosCompartidosClient({ gastos, mesId, userId, cerrado
     return s + Number(miParte?.monto_a_aportar ?? 0)
   }, 0)
 
+  // Sum monto_a_aportar per companion (non-user participants)
+  const totalesPorAcompanante: Record<string, number> = {}
+  for (const gasto of gastos) {
+    for (const p of (gasto.participantes ?? []) as Participante[]) {
+      if (!p.es_usuario_actual) {
+        totalesPorAcompanante[p.nombre] = (totalesPorAcompanante[p.nombre] ?? 0) + Number(p.monto_a_aportar)
+      }
+    }
+  }
+
+  async function handleCopiarDelMesPrevio() {
+    startTransition(async () => {
+      try {
+        const count = await copiarGastosCompartidosDelMesPrevio(mesId, userId)
+        router.refresh()
+        if (count === 0) alert('No hay gastos compartidos en el mes anterior')
+      } catch (err) {
+        alert(err instanceof Error ? err.message : 'Error al copiar gastos')
+      }
+    })
+  }
+
   async function handleDelete() {
     if (!deleteId) return
     startTransition(async () => {
@@ -66,7 +88,10 @@ export default function GastosCompartidosClient({ gastos, mesId, userId, cerrado
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-balance">Gastos Compartidos</h1>
           <p className="text-muted-foreground text-sm tabular-nums">
-            Total gastos compartidos: {formatARS(totalGeneral)} · Mi aporte: {formatARS(totalMiAporte)}
+            Total: {formatARS(totalGeneral)} · Yo: {formatARS(totalMiAporte)}
+            {Object.entries(totalesPorAcompanante).map(([nombre, monto]) => (
+              <span key={nombre}> · {nombre}: {formatARS(monto)}</span>
+            ))}
           </p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
@@ -77,9 +102,14 @@ export default function GastosCompartidosClient({ gastos, mesId, userId, cerrado
               <Lock className="h-3 w-3" aria-hidden="true" /> Mes cerrado
             </Badge>
           ) : (
-            <Button size="sm" onClick={() => { setEditingGasto(null); setFormOpen(true) }} className="touch-manipulation motion-reduce:transition-none">
-              <Plus className="h-4 w-4 mr-1" aria-hidden="true" /> Nuevo Gasto
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={handleCopiarDelMesPrevio} disabled={isPending} className="touch-manipulation motion-reduce:transition-none hover:bg-accent">
+                <Copy className="h-4 w-4 mr-1" aria-hidden="true" /> Copiar del mes anterior
+              </Button>
+              <Button size="sm" onClick={() => { setEditingGasto(null); setFormOpen(true) }} className="touch-manipulation motion-reduce:transition-none">
+                <Plus className="h-4 w-4 mr-1" aria-hidden="true" /> Nuevo Gasto
+              </Button>
+            </div>
           )}
         </div>
       </div>

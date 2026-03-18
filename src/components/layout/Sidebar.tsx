@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { LayoutDashboard, Receipt, Users, History, Bot, Menu, LogOut, TrendingUp } from 'lucide-react'
 import { getSupabaseBrowserClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -19,15 +19,18 @@ const navItems = [
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const periodo = searchParams.get('periodo')
 
   return (
     <nav className="flex flex-col gap-0.5" aria-label="Navegación principal">
       {navItems.map(({ href, label, icon: Icon }) => {
         const isActive = pathname === href || pathname.startsWith(href + '/')
+        const hrefWithPeriodo = periodo ? `${href}?periodo=${periodo}` : href
         return (
           <Link
             key={href}
-            href={href}
+            href={hrefWithPeriodo}
             onClick={onNavigate}
             aria-current={isActive ? 'page' : undefined}
             className={cn(

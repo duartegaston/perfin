@@ -66,7 +66,7 @@ export default function PieCategoriasChart({ gastosPorCategoria, categorias, sue
               ))}
             </Pie>
             <Tooltip
-              formatter={(value: number) => [formatARS(value), '']}
+              formatter={(value: number, name: string) => [formatARS(value), name]}
               contentStyle={{ fontSize: '0.75rem', fontVariantNumeric: 'tabular-nums' }}
               itemStyle={{ color: 'inherit' }}
             />
