@@ -84,17 +84,18 @@ export default function GastosCompartidosClient({ gastos, mesId, userId, cerrado
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-balance">Gastos Compartidos</h1>
-          <p className="text-muted-foreground text-sm tabular-nums">
-            Total: {formatARS(totalGeneral)} · Yo: {formatARS(totalMiAporte)}
+          <p className="text-muted-foreground text-sm tabular-nums flex flex-wrap gap-x-1">
+            <span>Total: {formatARS(totalGeneral)}</span>
+            <span>· Yo: {formatARS(totalMiAporte)}</span>
             {Object.entries(totalesPorAcompanante).map(([nombre, monto]) => (
-              <span key={nombre}> · {nombre}: {formatARS(monto)}</span>
+              <span key={nombre}>· {nombre}: {formatARS(monto)}</span>
             ))}
           </p>
         </div>
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2 flex-wrap">
           <ParticipantesPredefinidosManager predefinidos={predefinidos} userId={userId} />
           <CategoriasManager categorias={categorias} userId={userId} tipo="compartido" />
           {cerrado ? (
@@ -102,14 +103,14 @@ export default function GastosCompartidosClient({ gastos, mesId, userId, cerrado
               <Lock className="h-3 w-3" aria-hidden="true" /> Mes cerrado
             </Badge>
           ) : (
-            <div className="flex gap-2">
+            <>
               <Button variant="outline" size="sm" onClick={handleCopiarDelMesPrevio} disabled={isPending} className="touch-manipulation motion-reduce:transition-none hover:bg-accent">
                 <Copy className="h-4 w-4 mr-1" aria-hidden="true" /> Copiar del mes anterior
               </Button>
               <Button size="sm" onClick={() => { setEditingGasto(null); setFormOpen(true) }} className="touch-manipulation motion-reduce:transition-none">
                 <Plus className="h-4 w-4 mr-1" aria-hidden="true" /> Nuevo Gasto
               </Button>
-            </div>
+            </>
           )}
         </div>
       </div>
@@ -156,11 +157,11 @@ export default function GastosCompartidosClient({ gastos, mesId, userId, cerrado
                       <div className="px-3 py-2 text-xs text-muted-foreground">Sin participantes</div>
                     ) : (
                       participantes.map((p) => (
-                        <div key={p.id} className="flex items-center justify-between px-3 py-2">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className="text-sm">{p.nombre}</span>
-                            {p.es_usuario_actual && <Badge className="text-xs">yo</Badge>}
-                            <span className="text-xs text-muted-foreground tabular-nums">sueldo: {formatARS(Number(p.sueldo))}</span>
+                        <div key={p.id} className="flex items-center justify-between px-3 py-2 gap-2">
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 min-w-0">
+                            <span className="text-sm truncate">{p.nombre}</span>
+                            {p.es_usuario_actual && <Badge className="text-xs shrink-0">yo</Badge>}
+                            <span className="text-xs text-muted-foreground tabular-nums hidden sm:inline">sueldo: {formatARS(Number(p.sueldo))}</span>
                           </div>
                           <div className="flex items-center gap-1 shrink-0">
                             <span className="text-sm font-medium tabular-nums">{formatARS(Number(p.monto_a_aportar))}</span>

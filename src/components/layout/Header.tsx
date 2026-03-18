@@ -4,7 +4,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getMesLabel, getPeriodoString } from '@/lib/utils'
-import Sidebar from './Sidebar'
+import { MobileSidebarTrigger } from './Sidebar'
 
 interface HeaderProps {
   email: string
@@ -41,7 +41,7 @@ export default function Header({ email }: HeaderProps) {
     <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/95 backdrop-blur px-4">
       {/* Mobile sidebar trigger */}
       <div className="md:hidden">
-        <Sidebar />
+        <MobileSidebarTrigger />
       </div>
 
       {/* Month navigation */}
@@ -55,7 +55,7 @@ export default function Header({ email }: HeaderProps) {
         >
           <ChevronLeft className="h-4 w-4" aria-hidden="true" />
         </Button>
-        <span className="text-sm font-medium min-w-[140px] text-center select-none">
+        <span className="text-sm font-medium min-w-[110px] text-center select-none tabular-nums">
           {getMesLabel(mes, anio)}
         </span>
         <Button

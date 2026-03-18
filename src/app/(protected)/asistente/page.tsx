@@ -14,7 +14,7 @@ export default async function AsistentePage() {
     .single()
 
   return (
-    <div className="flex flex-col h-full max-h-[calc(100vh-8rem)]">
+    <div className="flex flex-col h-full max-h-[calc(100dvh-8rem)]">
       <div className="mb-4">
         <h1 className="text-2xl font-bold tracking-tight">Asistente IA</h1>
         <p className="text-muted-foreground text-sm">

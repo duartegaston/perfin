@@ -61,7 +61,7 @@ export default function GastosPersonalesClient({ gastos, mesId, userId, cerrado,
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-balance">Mis Gastos</h1>
           <p className="text-muted-foreground text-sm tabular-nums">
@@ -69,21 +69,21 @@ export default function GastosPersonalesClient({ gastos, mesId, userId, cerrado,
             {sueldo > 0 && ` (${calcularPorcentaje(total, sueldo)}% del sueldo)`}
           </p>
         </div>
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2 flex-wrap">
           <CategoriasManager categorias={categorias} userId={userId} tipo="personal" />
           {cerrado ? (
             <Badge variant="secondary" className="gap-1">
               <Lock className="h-3 w-3" aria-hidden="true" /> Mes cerrado
             </Badge>
           ) : (
-            <div className="flex gap-2">
+            <>
               <Button variant="outline" size="sm" onClick={handleCopiarFijos} disabled={isPending} className="touch-manipulation motion-reduce:transition-none hover:bg-accent">
                 <Copy className="h-4 w-4 mr-1" aria-hidden="true" /> Copiar Fijos
               </Button>
               <Button size="sm" onClick={() => { setEditingGasto(null); setFormOpen(true) }} className="touch-manipulation motion-reduce:transition-none">
                 <Plus className="h-4 w-4 mr-1" aria-hidden="true" /> Nuevo Gasto
               </Button>
-            </div>
+            </>
           )}
         </div>
       </div>

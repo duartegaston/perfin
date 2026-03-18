@@ -19,7 +19,7 @@ export default async function ProtectedLayout({
   const mesData = await getMesActual(user.id)
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-dvh overflow-hidden">
       <Sidebar />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Suspense>
