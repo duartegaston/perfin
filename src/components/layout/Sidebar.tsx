@@ -85,7 +85,7 @@ export default function Sidebar() {
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-sidebar-primary">
             <TrendingUp className="h-4 w-4 text-sidebar-primary-foreground" aria-hidden="true" />
           </div>
-          <span className="font-semibold text-base text-sidebar-foreground tracking-tight">FinanzasApp</span>
+          <span className="font-semibold text-base text-sidebar-foreground tracking-tight">PerFin</span>
         </div>
         <div className="flex-1 overflow-y-auto px-3 py-4">
           <NavLinks />
@@ -108,7 +108,7 @@ export default function Sidebar() {
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-sidebar-primary">
               <TrendingUp className="h-4 w-4 text-sidebar-primary-foreground" aria-hidden="true" />
             </div>
-            <span className="font-semibold text-base text-sidebar-foreground tracking-tight">FinanzasApp</span>
+            <span className="font-semibold text-base text-sidebar-foreground tracking-tight">PerFin</span>
           </div>
           <div className="flex-1 px-3 py-4">
             <NavLinks onNavigate={() => setOpen(false)} />

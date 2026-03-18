@@ -15,7 +15,7 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary shadow-lg mb-4">
             <TrendingUp className="h-6 w-6 text-primary-foreground" aria-hidden="true" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">FinanzasApp</h1>
+          <h1 className="text-3xl font-bold tracking-tight">PerFin</h1>
           <p className="text-muted-foreground mt-2 text-sm">Gestioná tus finanzas personales</p>
         </div>
         <LoginForm />
